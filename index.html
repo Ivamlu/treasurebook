@@ -3,212 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TreasureBook - Seu Presente Digital</title>
+    <title>TreasureBook Builder</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        :root {
-            --cor-amor: #ff4d6d;
-            --cor-amigos: #4cc9f0;
-            --cor-familia: #f72585;
-            --bg-grad: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-        }
-
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg-grad); color: white; overflow-x: hidden; }
-        .container { max-width: 500px; margin: auto; padding: 20px; min-height: 100vh; }
-
-        /* Telas */
-        .step { display: none; animation: fadeIn 0.5s ease-in-out; }
-        .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Estilo dos Inputs e Botões */
-        .card-editor { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.2); }
+        :root { --cor-amor: #ff4d6d; --bg-grad: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg-grad); color: white; min-height: 100vh; }
+        .container { max-width: 500px; margin: auto; padding: 20px; }
+        .card-editor { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); }
         h2 { text-align: center; color: #ffeb3b; }
-        label { display: block; margin: 10px 0 5px; font-weight: bold; }
+        label { display: block; margin: 15px 0 5px; font-weight: bold; }
         input, textarea, select { width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 10px; box-sizing: border-box; }
-        
         .btn { width: 100%; padding: 15px; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; margin-top: 10px; }
-        .btn-primary { background: #ff4d6d; color: white; box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4); }
-        .btn-primary:hover { transform: scale(1.02); }
-
-        /* Preview da Mensagem Final */
-        .preview-box { display: none; text-align: center; }
-        .book-cover { width: 100%; height: 300px; background: #800000; border-radius: 10px 20px 20px 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-left: 10px solid #5d0000; transition: 0.8s; transform-origin: left; box-shadow: 10px 10px 20px rgba(0,0,0,0.5); }
-        .book-open { transform: rotateY(-110deg); opacity: 0.3; }
-
-        .counter-box { font-size: 1.2em; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; margin: 20px 0; color: #ffeb3b; }
-        
-        .coupon-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .coupon { background: #fff; color: #333; padding: 10px; border-radius: 10px; border: 2px dashed #ff4d6d; font-size: 0.9em; cursor: pointer; }
-        .coupon.used { background: #ddd; text-decoration: line-through; opacity: 0.6; }
-
-        .media-preview { width: 100%; border-radius: 10px; margin-top: 10px; }
+        .btn-generate { background: #28a745; color: white; font-size: 18px; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4); }
+        .status { text-align: center; color: #ffeb3b; display: none; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="step1" class="step active">
-        <h2 style="font-family: serif; font-size: 32px;">TreasureBook</h2>
-        <p style="text-align: center;">Monte seu livro de memórias digital</p>
+    <div class="card-editor">
+        <h2>TreasureBook Builder 📕</h2>
+        <p style="text-align: center; font-size: 0.9em;">Preencha para criar o arquivo do presente</p>
         
-        <div class="card-editor">
-            <label>Para quem é?</label>
-            <select id="tema">
-                <option value="amor">Meu Amor ❤️</option>
-                <option value="amigo">Melhor Amigo(a) 🌟</option>
-                <option value="familia">Família 🏠</option>
-            </select>
+        <label>Nome do seu Amor:</label>
+        <input type="text" id="nome" placeholder="Ex: Mayara">
 
-            <label>Nome do Destinatário:</label>
-            <input type="text" id="nome" placeholder="Ex: Mayara">
+        <label>Data Especial (Início de tudo):</label>
+        <input type="date" id="dataInicio">
 
-            <label>Data que se conheceram/início:</label>
-            <input type="date" id="dataInicio">
+        <label>Sua Mensagem:</label>
+        <textarea id="mensagem" placeholder="Escreva sua declaração aqui..."></textarea>
 
-            <label>Sua Mensagem/Declaração:</label>
-            <textarea id="mensagem" placeholder="Escreva aqui seu coração..."></textarea>
-
-            <label>Foto de Capa (Momento especial):</label>
-            <input type="file" id="foto" accept="image/*">
-            
-            <label>Música de Fundo (Upload):</label>
-            <input type="file" id="musica" accept="audio/*">
-        </div>
-
-        <button class="btn btn-primary" onclick="salvarEGerar()">CRIAR MEU TREASUREBOOK</button>
-    </div>
-
-    <div id="step2" class="step">
-        <h2 id="msgTitulo">Para você!</h2>
+        <label>Foto Principal (Obrigatório):</label>
+        <input type="file" id="foto" accept="image/*">
         
-        <div id="bookCover" class="book-cover" onclick="abrirLivro()">
-            <div style="text-align: center;">
-                <span style="font-size: 50px;">📕</span>
-                <p>Toque para Abrir</p>
-            </div>
-        </div>
+        <label>Música (.mp3):</label>
+        <input type="file" id="musica" accept="audio/*">
 
-        <div id="conteudoLivro" style="display: none;">
-            <div class="counter-box" id="contador"></div>
-            
-            <div id="mediaFinal"></div>
-            
-            <div class="card-editor" style="background: white; color: #333; text-align: left;">
-                <p id="textoFinal" style="white-space: pre-wrap;"></p>
-            </div>
-
-            <h3>🎁 Meus Cupons</h3>
-            <div class="coupon-grid">
-                <div class="coupon" onclick="usarCupom(this)">🎟️ 1 Vale Jantar</div>
-                <div class="coupon" onclick="usarCupom(this)">🎟️ 1 Massagem</div>
-                <div class="coupon" onclick="usarCupom(this)">🎟️ 1 Dia de Cinema</div>
-                <div class="coupon" onclick="usarCupom(this)">🎟️ 1 Beijo Extra</div>
-            </div>
-
-            <button class="btn btn-primary" style="margin-top: 30px;" onclick="perguntaEspecial()">CLIQUE PARA UMA SURPRESA</button>
-            <button class="btn" style="background: #555; color: white;" onclick="location.reload()">VOLTAR</button>
-        </div>
+        <button class="btn btn-generate" onclick="processarEBaixar()">GERAR ARQUIVO PARA WHATSAPP</button>
+        <p id="status" class="status">Processando... Aguarde.</p>
     </div>
 </div>
 
 <script>
-    let timerInterval;
-
-    function salvarEGerar() {
-        const nome = document.getElementById('nome').value;
-        if(!nome) return alert("Coloque o nome de quem vai receber!");
-
-        // Troca de tela
-        document.getElementById('step1').classList.remove('active');
-        document.getElementById('step2').classList.add('active');
-        
-        document.getElementById('msgTitulo').innerText = "Para: " + nome;
-        document.getElementById('textoFinal').innerText = document.getElementById('mensagem').value;
-
-        // Inicia Contador
-        const data = document.getElementById('dataInicio').value;
-        if(data) {
-            iniciarContador(data);
-        }
-
-        // Trata Foto
-        const fotoInput = document.getElementById('foto').files[0];
-        if(fotoInput) {
+    async function toBase64(file) {
+        return new Promise((resolve, reject) => {
             const reader = new FileReader();
-            reader.onload = (e) => {
-                document.getElementById('mediaFinal').innerHTML = `<img src="${e.target.result}" class="media-preview">`;
-            };
-            reader.readAsDataURL(fotoInput);
-        }
-
-        // Trata Música
-        const musicaInput = document.getElementById('musica').files[0];
-        if(musicaInput) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const audio = new Audio(e.target.result);
-                audio.loop = true;
-                audio.play();
-            };
-            reader.readAsDataURL(musicaInput);
-        }
-    }
-
-    function abrirLivro() {
-        const cover = document.getElementById('bookCover');
-        cover.classList.add('book-open');
-        setTimeout(() => {
-            cover.style.display = 'none';
-            document.getElementById('conteudoLivro').style.display = 'block';
-            lancarConfete();
-        }, 600);
-    }
-
-    function iniciarContador(data) {
-        const dataFoco = new Date(data).getTime();
-        
-        timerInterval = setInterval(() => {
-            const agora = new Date().getTime();
-            const diff = agora - dataFoco;
-
-            const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const segundos = Math.floor((diff % (1000 * 60)) / 1000);
-
-            document.getElementById('contador').innerHTML = `
-                <strong>Nosso Tempo:</strong><br>
-                ${dias} dias, ${horas}h ${minutos}m ${segundos}s
-            `;
-        }, 1000);
-    }
-
-    function usarCupom(el) {
-        el.classList.toggle('used');
-        if(el.classList.contains('used')) {
-            lancarConfete();
-            alert("Cupom Resgatado! Aproveite seu presente ❤️");
-        }
-    }
-
-    function lancarConfete() {
-        confetti({
-            particleCount: 150,
-            spread: 70,
-            origin: { y: 0.6 },
-            colors: ['#ff4d6d', '#ffffff', '#ffeb3b']
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
         });
     }
 
-    function perguntaEspecial() {
-        const resposta = confirm("Você aceita ser a pessoa mais feliz do mundo ao meu lado?");
-        if(resposta) {
-            lancarConfete();
-            alert("VOCÊ DISSE SIM! ❤️ Prepare-se para muitos momentos incríveis!");
+    async function processarEBaixar() {
+        const nome = document.getElementById('nome').value;
+        const data = document.getElementById('dataInicio').value;
+        const msg = document.getElementById('mensagem').value;
+        const fotoFile = document.getElementById('foto').files[0];
+        const musicaFile = document.getElementById('musica').files[0];
+        const status = document.getElementById('status');
+
+        if(!nome || !msg || !fotoFile) {
+            alert("Por favor, preencha o nome, a mensagem e escolha uma foto!");
+            return;
         }
+
+        status.style.display = 'block';
+
+        const fotoBase64 = await toBase64(fotoFile);
+        let musicaBase64 = "";
+        if(musicaFile) {
+            musicaBase64 = await toBase64(musicaFile);
+        }
+
+        const template = `
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para meu Amor</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"><\/script>
+    <style>
+        body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; }
+        .book-container { text-align: center; padding: 20px; transition: 1s; }
+        .cover { width: 250px; height: 350px; background: #800000; border-radius: 10px 20px 20px 10px; border-left: 10px solid #5d0000; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 20px 20px 50px rgba(0,0,0,0.5); }
+        .open-book { transform: rotateY(-120deg); opacity: 0; pointer-events: none; }
+        .content { display: none; width: 90%; max-width: 400px; animation: fadeIn 2s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .photo { width: 100%; border-radius: 15px; margin: 20px 0; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        .counter { color: #ffeb3b; font-size: 1.2em; margin-bottom: 20px; }
+        .message { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; text-align: left; line-height: 1.6; }
+        .coupon { border: 2px dashed #ff4d6d; padding: 10px; margin: 5px; display: inline-block; border-radius: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div id="coverContainer" class="book-container">
+        <div class="cover" onclick="abrir()">
+            <div style="text-align: center;">
+                <span style="font-size: 80px;">📕</span>
+                <p>Toque para abrir,<br>${nome}</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="mainContent" class="content">
+        <h1 style="color: #ff4d6d;">Nosso TreasureBook ❤️</h1>
+        <div class="counter" id="timer"></div>
+        <img src="${fotoBase64}" class="photo">
+        <div class="message">${msg.replace(/\n/g, '<br>')}</div>
+        <p>🎁 Seus Cupons (Toque para usar):</p>
+        <div class="coupon" onclick="confetti()">🎟️ Vale Beijo</div>
+        <div class="coupon" onclick="confetti()">🎟️ Vale Jantar</div>
+        <audio id="player" loop src="${musicaBase64}"></audio>
+    </div>
+
+    <script>
+        function abrir() {
+            document.getElementById('coverContainer').classList.add('open-book');
+            setTimeout(() => {
+                document.getElementById('coverContainer').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('player').play();
+                setInterval(updateTimer, 1000);
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            }, 1000);
+        }
+
+        function updateTimer() {
+            const start = new Date("${data}").getTime();
+            const now = new Date().getTime();
+            const diff = now - start;
+            const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+            document.getElementById('timer').innerText = dias + " dias de puro amor!";
+        }
+    <\/script>
+</body>
+</html>`;
+
+        const blob = new Blob([template], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `TreasureBook_Para_${nome}.html`;
+        a.click();
+        status.innerText = "Pronto! Arquivo baixado.";
     }
 </script>
-
 </body>
 </html>
